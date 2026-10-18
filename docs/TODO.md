@@ -14,11 +14,11 @@ Andreas Holzer @WebCrew (GitHub) · Copyright © 2026 Andreas Holzer.
 - [x] Erste Namensrecherche in Web, GitHub und DPMAregister dokumentiert.
 - [ ] Aufnahme und echtes gleichzeitiges Sprechen zwischen mehreren Geräten über unterschiedliche Netzwerke abnehmen.
 
-Ziel: Ein frei verfügbares, eigenständiges Friends-SNCMS mit einem ähnlichen Kernumfang wie das analysierte Altprodukt. PHP 8.4, MySQL 5.7, Deutsch/Englisch, integrierte Erweiterungen und eigener moderner Oberfläche. Öffentliche Projekteinstiegsseite: README mit persönlichem Profil und dezentem Guided-CMS-Hinweis. Noch kein GitHub-Repository angelegt oder veröffentlicht.
+Ziel: Ein frei verfügbares, eigenständiges Friends-SNCMS mit einem ähnlichen Kernumfang wie das analysierte Altprodukt. PHP 8.4, MySQL 5.7, Deutsch/Englisch, integrierte Erweiterungen und eigener moderner Oberfläche. Öffentliche Projekteinstiegsseite: README mit persönlichem Profil und dezentem Guided-CMS-Hinweis. GitHub: https://github.com/WebCrew/Friends-SNCMS — erste Final-Version 1.0.0.
 
 ## Etappe 1 · Neue Community-Grundlage
 
-Entwicklungsstand 0.3.1: Schema 3, frische Installation oder gesichertes additives Update von 0.2. Keine verpflichtenden Bezahl-APIs oder Abos; GitHub-Regeln und Mitwirkenden-Anleitung sind lokal vorbereitet, aber noch nicht auf GitHub aktiviert.
+Entwicklungsstand 0.3.1: Schema 3, frische Installation oder gesichertes additives Update von 0.2. Keine verpflichtenden Bezahl-APIs oder Abos; GitHub-Regeln und Mitwirkenden-Anleitung sind veröffentlicht; aktuelle Einstellungen siehe REPOSITORY.md.
 
 - [x] ZIP-Struktur und Funktionsbereiche analysieren; Herkunft dokumentieren.
 - [x] Eigenes PHP-/PDO-Fundament und Datenbankschema.
@@ -82,3 +82,4 @@ Entwicklungsstand 0.3.1: Schema 3, frische Installation oder gesichertes additiv
 ## Maßstab für kurze Implementierung
 
 Gemeinsame Formulare, Datenbankzugriff, Übersetzungen und Komponenten vermeiden Wiederholung. Keine Code-Verschleierung, keine Minifizierung des Lerncodes und kein Weglassen von Rechten/Validierung zugunsten weniger Zeilen. Den zentralen Controller bei wachsendem Umfang in Fachmodule teilen.
+

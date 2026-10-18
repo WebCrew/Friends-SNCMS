@@ -85,3 +85,9 @@ Three fictional member accounts were separately created on the authorized live t
 ## 0.3.7 configurable upload limits
 
 Full baseline passed (53 PHP / 13 JavaScript files). Additional checks verify 64 MB and 999 MB settings, a custom attachment count, rejection of zero limits and rejection of excess attachments before any post is created. Browser verification saved 64 MB and eight attachments in an isolated local fixture. Both values persisted after submission; PHP hosting limits were visible. These are example fixture settings, not changes to the live site's existing preferences. Runtime changes deployed to the authorized test installation; no schema change. Existing daily and 250 MB lifetime storage quotas remain. A real 64 MB HTTP transfer was not performed.
+
+## 1.0.0 First Final — GitHub validation
+
+The owner authorized the first Final publication after online installer/interface testing. The public GitHub Quality run at https://github.com/WebCrew/Friends-SNCMS/actions/runs/39083019745 passed both jobs: PHP 8.4 and JavaScript, and MySQL 5.7. The MySQL smoke job verified an actual 5.7 server, empty-database schema creation, active admin loading, 64 MB/eight-attachment settings, utf8mb4 emoji storage, private-post and member/admin access denial, accepted friendships, comment insertion, foreign-key cascades and atomic throttle upserts. This is a smoke suite, not complete coverage of every CMS action on MySQL.
+
+Local final baseline passed: 54 PHP and 13 JavaScript files plus isolated integration checks. Source review found no copied live/test-account passwords or runtime configuration in the release tree. See REPOSITORY.md for configured community and protection policy. Physical microphone/cross-network and independent security-review gaps remain; Final does not imply certification.
