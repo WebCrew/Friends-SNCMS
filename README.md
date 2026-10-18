@@ -10,7 +10,7 @@ Created by **Andreas Holzer · [@WebCrew](https://github.com/WebCrew)**. Free to
 
 **Donations are always voluntary and support the project.** If Friends-SNCMS helps your business earn money, or you sell themes or plugins for it, please consider giving back through a donation. No donation, subscription or license key is required, including for commercial use. [Support the project](SUPPORT.md).
 
-![Friends-SNCMS profile preview](docs/images/friends-profile.png)
+![Friends-SNCMS English news feed with link preview and chat](docs/images/friends-feed-en.jpeg)
 
 [Download the installer ZIP](https://github.com/WebCrew/Friends-SNCMS/releases/latest) · [Installation](docs/INSTALL.md) · [Wiki](https://github.com/WebCrew/Friends-SNCMS/wiki) · [Community](https://github.com/WebCrew/Friends-SNCMS/discussions) · [Themes & plugins](docs/EXTENSIONS.md)
 
