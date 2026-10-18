@@ -1,0 +1,7 @@
+/* Friends-SNCMS · Author: Andreas Holzer @WebCrew (GitHub) · Copyright © 2026 Andreas Holzer. */
+:root{color-scheme:light;--bg:#f3f5f9;--surface:#fff;--ink:#23334c;--muted:#748197;--line:#e3e8f0;--accent:#245bc1;--on-accent:#fff;--soft:#e9effb;--hero:#e4edfc;--hero-ink:#213f71;--hero-line:#d7e3f9;--avatar:#e6edfa}
+:root[data-mode=dark]{color-scheme:dark;--bg:#131923;--surface:#1b2432;--ink:#e5ecf8;--muted:#9aa9bf;--line:#2e3a4e;--accent:#8db5ff;--on-accent:#132b52;--soft:#263854;--hero:#243955;--hero-ink:#d6e5ff;--hero-line:#334c70;--avatar:#2a3d5a}
+@media(prefers-color-scheme:dark){:root:not([data-mode=light]):not([data-mode=dark]){color-scheme:dark;--bg:#131923;--surface:#1b2432;--ink:#e5ecf8;--muted:#9aa9bf;--line:#2e3a4e;--accent:#8db5ff;--on-accent:#132b52;--soft:#263854;--hero:#243955;--hero-ink:#d6e5ff;--hero-line:#334c70;--avatar:#2a3d5a}}
+:root[data-palette=ember]{--accent:#a74617;--soft:#fcf0e7;--hero:#f7e5d8;--hero-ink:#753b20;--hero-line:#ecd7c7;--avatar:#f7e9db}
+:root[data-palette=ember][data-mode=dark]{--accent:#f2ac77;--on-accent:#46200e;--soft:#453025;--hero:#483125;--hero-ink:#f5dbc7;--hero-line:#654534;--avatar:#4a3528}
+@media(prefers-color-scheme:dark){:root[data-palette=ember]:not([data-mode=light]):not([data-mode=dark]){--accent:#f2ac77;--on-accent:#46200e;--soft:#453025;--hero:#483125;--hero-ink:#f5dbc7;--hero-line:#654534;--avatar:#4a3528}}

@@ -1,0 +1,53 @@
+title: "[Plugin] "
+body:
+  - type: markdown
+    attributes:
+      value: "Read [directory rules](https://github.com/WebCrew/Friends-SNCMS/blob/main/docs/EXTENSIONS.md). One entry per original package. Commercial publishers are encouraged to support the core voluntarily."
+  - type: input
+    id: package
+    attributes:
+      label: Package name, unique ID and author
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Description / Beschreibung
+      description: Purpose, features and screenshots with fictional data.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source repository and release/download URL
+    validations:
+      required: true
+  - type: input
+    id: license
+    attributes:
+      label: License and price / Lizenz und Preis
+      description: State free or paid, currency and recurring charges, if any.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and tested versions
+      description: CMS version, API 1, PHP/database, languages and dependencies.
+    validations:
+      required: true
+  - type: textarea
+    id: operation
+    attributes:
+      label: Installation, recovery, data access and support
+      description: Disclose access, external services, data changes, limitations and support link.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Publisher confirmation
+      options:
+        - label: I may publish this package and have read the directory rules. Listing is not maintainer endorsement.
+          required: true
+

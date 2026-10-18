@@ -1,0 +1,12 @@
+/storage/*
+!/storage/.gitkeep
+/work/
+/.phpunit.cache/
+/sql_info.txt
+/TESTKONTEN*
+*.sqlite
+*.sqlite-*
+*.pem
+.env
+.env.*
+

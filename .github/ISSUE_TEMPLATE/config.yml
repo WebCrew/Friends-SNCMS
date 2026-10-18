@@ -1,0 +1,12 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Help and community / Hilfe und Community
+    url: https://github.com/WebCrew/Friends-SNCMS/discussions
+    about: Ask questions and discuss setup; no passwords or private data.
+  - name: Themes and plugins / Erweiterungen
+    url: https://github.com/WebCrew/Friends-SNCMS/discussions
+    about: Browse or submit extensions in the Plugins and Themes categories.
+  - name: Private security report / Sicherheitslücke vertraulich melden
+    url: https://github.com/WebCrew/Friends-SNCMS/security/advisories/new
+    about: Do not publish vulnerabilities in public issues.
+

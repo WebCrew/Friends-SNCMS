@@ -1,0 +1,69 @@
+name: Quality
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  php:
+    name: PHP 8.4 and JavaScript
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@d52fc211a0436f8839a587b3b5b8efddab4744ea # v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, pdo_mysql, gd, fileinfo, zip, curl, openssl, iconv
+          coverage: none
+      - name: Syntax and isolated integration checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          find app bin plugins public resources tests -name '*.php' -print0 | xargs -0 -n1 php -l
+          php -l index.php
+          php -l install.php
+          find public tests -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
+          for suite in integration voice-room features hosting installer-errors account-mail refinements automatic-links; do
+            php "tests/$suite.php"
+          done
+          node tests/automatic-links.mjs
+  mysql:
+    name: MySQL 5.7
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      mysql:
+        image: mysql:5.7.44
+        env:
+          MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+          MYSQL_DATABASE: friends_ci
+          MYSQL_USER: friends_ci
+          MYSQL_PASSWORD: disposable-ci-only
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@d52fc211a0436f8839a587b3b5b8efddab4744ea # v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, gd, fileinfo, zip, curl, openssl, iconv
+          coverage: none
+      - name: Schema and core behavior on MySQL 5.7
+        run: php tests/mysql.php
+        env:
+          FRIENDS_TEST_MYSQL: '1'

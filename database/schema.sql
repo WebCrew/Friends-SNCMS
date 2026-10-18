@@ -1,0 +1,144 @@
+-- Friends-SNCMS · Author: Andreas Holzer @WebCrew (GitHub) · Copyright © 2026 Andreas Holzer.
+-- Original schema. MySQL 5.7, InnoDB, utf8mb4. Executed by the installer, never imported manually.
+CREATE TABLE f_users (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ username VARCHAR(40) NOT NULL UNIQUE,
+ email VARCHAR(190) NOT NULL UNIQUE,
+ password VARCHAR(255) NOT NULL,
+ name VARCHAR(100) NOT NULL,
+ bio TEXT NOT NULL,
+ role VARCHAR(20) NOT NULL DEFAULT 'member',
+ status VARCHAR(20) NOT NULL DEFAULT 'active',
+ locale VARCHAR(2) NOT NULL DEFAULT 'en',
+ auth_version INTEGER NOT NULL DEFAULT 1,
+ created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_communities (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ owner_id BIGINT UNSIGNED NOT NULL,
+ kind VARCHAR(10) NOT NULL,
+ name VARCHAR(100) NOT NULL,
+ description TEXT NOT NULL,
+ created_at DATETIME NOT NULL,
+ FOREIGN KEY (owner_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_memberships (
+ community_id BIGINT UNSIGNED NOT NULL,
+ user_id BIGINT UNSIGNED NOT NULL,
+ PRIMARY KEY (community_id,user_id),
+ FOREIGN KEY (community_id) REFERENCES f_communities(id) ON DELETE CASCADE,
+ FOREIGN KEY (user_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_posts (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ user_id BIGINT UNSIGNED NOT NULL,
+ community_id BIGINT UNSIGNED NULL,
+ body TEXT NOT NULL,
+ visibility VARCHAR(10) NOT NULL DEFAULT 'members',
+ created_at DATETIME NOT NULL,
+ FOREIGN KEY (user_id) REFERENCES f_users(id) ON DELETE CASCADE,
+ FOREIGN KEY (community_id) REFERENCES f_communities(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE INDEX f_posts_created ON f_posts(created_at,id);
+CREATE TABLE f_comments (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ post_id BIGINT UNSIGNED NOT NULL,
+ user_id BIGINT UNSIGNED NOT NULL,
+ body TEXT NOT NULL,
+ created_at DATETIME NOT NULL,
+ FOREIGN KEY (post_id) REFERENCES f_posts(id) ON DELETE CASCADE,
+ FOREIGN KEY (user_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_likes (
+ post_id BIGINT UNSIGNED NOT NULL,
+ user_id BIGINT UNSIGNED NOT NULL,
+ PRIMARY KEY (post_id,user_id),
+ FOREIGN KEY (post_id) REFERENCES f_posts(id) ON DELETE CASCADE,
+ FOREIGN KEY (user_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_friendships (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ low_id BIGINT UNSIGNED NOT NULL,
+ high_id BIGINT UNSIGNED NOT NULL,
+ requester_id BIGINT UNSIGNED NOT NULL,
+ status VARCHAR(10) NOT NULL DEFAULT 'pending',
+ UNIQUE (low_id,high_id),
+ FOREIGN KEY (low_id) REFERENCES f_users(id) ON DELETE CASCADE,
+ FOREIGN KEY (high_id) REFERENCES f_users(id) ON DELETE CASCADE,
+ FOREIGN KEY (requester_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_messages (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ sender_id BIGINT UNSIGNED NOT NULL,
+ recipient_id BIGINT UNSIGNED NOT NULL,
+ body TEXT NOT NULL,
+ kind VARCHAR(10) NOT NULL DEFAULT 'text',
+ media VARCHAR(80) NOT NULL DEFAULT '',
+ mime VARCHAR(40) NOT NULL DEFAULT '',
+ media_bytes BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ created_at DATETIME NOT NULL,
+ FOREIGN KEY (sender_id) REFERENCES f_users(id) ON DELETE CASCADE,
+ FOREIGN KEY (recipient_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE INDEX f_messages_recipient ON f_messages(recipient_id,id);
+CREATE TABLE f_voice_members (
+ user_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
+ session_id VARCHAR(32) NOT NULL UNIQUE,
+ token_hash VARCHAR(64) NOT NULL,
+ auth_version INTEGER NOT NULL,
+ muted INTEGER NOT NULL DEFAULT 0,
+ last_seen BIGINT UNSIGNED NOT NULL,
+ FOREIGN KEY (user_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_voice_signals (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ sender_session VARCHAR(32) NOT NULL,
+ recipient_session VARCHAR(32) NOT NULL,
+ kind VARCHAR(9) NOT NULL,
+ payload TEXT NOT NULL,
+ created_at BIGINT UNSIGNED NOT NULL,
+ FOREIGN KEY (sender_session) REFERENCES f_voice_members(session_id) ON DELETE CASCADE,
+ FOREIGN KEY (recipient_session) REFERENCES f_voice_members(session_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE INDEX f_voice_signals_recipient ON f_voice_signals(recipient_session,id);
+CREATE INDEX f_voice_signals_expiry ON f_voice_signals(created_at);
+CREATE TABLE f_notifications (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ user_id BIGINT UNSIGNED NOT NULL,
+ actor_id BIGINT UNSIGNED NOT NULL,
+ kind VARCHAR(30) NOT NULL,
+ target_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ seen INTEGER NOT NULL DEFAULT 0,
+ created_at DATETIME NOT NULL,
+ FOREIGN KEY (user_id) REFERENCES f_users(id) ON DELETE CASCADE,
+ FOREIGN KEY (actor_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE INDEX f_notifications_user ON f_notifications(user_id,seen,id);
+CREATE TABLE f_reports (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ user_id BIGINT UNSIGNED NOT NULL,
+ post_id BIGINT UNSIGNED NOT NULL,
+ reason VARCHAR(500) NOT NULL,
+ status VARCHAR(10) NOT NULL DEFAULT 'open',
+ created_at DATETIME NOT NULL,
+ UNIQUE (user_id,post_id),
+ FOREIGN KEY (user_id) REFERENCES f_users(id) ON DELETE CASCADE,
+ FOREIGN KEY (post_id) REFERENCES f_posts(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_settings (
+ name VARCHAR(100) NOT NULL PRIMARY KEY,
+ value TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_throttles (
+ bucket VARCHAR(64) NOT NULL PRIMARY KEY,
+ attempts INTEGER NOT NULL,
+ expires_at BIGINT UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE f_audit (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ actor_id BIGINT UNSIGNED NOT NULL,
+ action VARCHAR(100) NOT NULL,
+ target_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ created_at DATETIME NOT NULL,
+ FOREIGN KEY (actor_id) REFERENCES f_users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,0 +1,12 @@
+# Friends-SNCMS · Andreas Holzer @WebCrew (GitHub) · Copyright © 2026 Andreas Holzer.
+# Apache 2.4 / compatible LiteSpeed: upload the COMPLETE folder, including this hidden file.
+# Deliberate allowlist: private application/runtime paths are never served.
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+RewriteEngine On
+RewriteRule ^ - [E=FRIENDS_ROOT_GUARD:1]
+RewriteRule ^(?:index\.php|install\.php)?$ - [L]
+RewriteRule ^public/assets/(?:[a-zA-Z0-9_-]+/)*[a-zA-Z0-9_.-]+\.(?:css|js|svg|png|jpe?g|webp|ico|woff2?)$ - [L]
+# Certificate challenge files remain available to the host's ACME client.
+RewriteRule ^\.well-known/acme-challenge/[a-zA-Z0-9_-]+$ - [L]
+RewriteRule ^ - [F,L]

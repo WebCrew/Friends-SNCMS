@@ -1,0 +1,50 @@
+<?php
+/** Friends-SNCMS · Andreas Holzer @WebCrew (GitHub) · Copyright © 2026 Andreas Holzer. */
+declare(strict_types=1);
+if (PHP_SAPI!=='cli') exit;
+$dir=sys_get_temp_dir().'/friends-account-'.bin2hex(random_bytes(6)); mkdir($dir);
+putenv('FRIENDS_CONFIG='.$dir.'/config.php');
+require dirname(__DIR__).'/app/bootstrap.php';
+use Friends\{App,Db,AccountMail};
+$db=new Db(['dsn'=>'sqlite:'.$dir.'/test.sqlite']); $db->migrate();
+foreach(['secret'=>bin2hex(random_bytes(32)),'schema_version'=>'3'] as $k=>$v) $db->query('INSERT INTO f_settings (name,value) VALUES (?,?)',[$k,$v]);
+file_put_contents(FRIENDS_CONFIG,'<?php return '.var_export(['dsn'=>'sqlite:'.$dir.'/test.sqlite'],true).';');
+$_SESSION=[]; $_GET=[]; $_SERVER['REMOTE_ADDR']='127.0.0.1';
+$app=new App(); $mail=new AccountMail($app); $count=0;
+$check=static function(bool $ok,string $label) use(&$count):void { if(!$ok) throw new RuntimeException($label); ++$count; echo "PASS $label\n"; };
+$deny=static function(callable $fn,string $label) use($check):void { try { $fn(); } catch(DomainException) { $check(true,$label); return; } $check(false,$label); };
+$get=fn(int $id)=>$db->one('SELECT * FROM f_users WHERE id=?',[$id]);
+try {
+    $deny(fn()=>$mail->ready(),'email requires configured transport and canonical URL');
+    foreach(['mail_transport'=>'smtp','mail_from'=>'sender@example.test','public_url'=>'https://community.example.test/sub'] as $k=>$v) $app->saveSetting($k,$v);
+    $check($mail->ready()==='https://community.example.test/sub','canonical URL supports subfolder');
+    foreach(['active','pending','suspended'] as $i=>$status) $db->query('INSERT INTO f_users (username,email,password,name,bio,status,created_at) VALUES (?,?,?,?,?,?,?)',['user'.$i,'user'.$i.'@example.test',password_hash('Old Test Password!',PASSWORD_DEFAULT),'User','',''.$status,$app->now()]);
+    $u=$get(1); $token=$mail->token($u,'reset',time()+1800);
+    $check($mail->account($token,'reset')['id']===1,'valid reset token resolves active account');
+    $deny(fn()=>$mail->account($token,'verify'),'token cannot cross purposes');
+    $deny(fn()=>$mail->account(substr($token,0,-1).($token[-1]==='a'?'b':'a'),'reset'),'modified signature rejected');
+    $deny(fn()=>$mail->account($mail->token($u,'reset',time()-1),'reset'),'expired token rejected');
+    $deny(fn()=>$mail->account(str_repeat('x',400),'reset'),'malformed token rejected');
+    $deny(fn()=>$mail->complete('reset',$token,['password'=>'short','password_confirm'=>'short']),'short password rejected');
+    $deny(fn()=>$mail->complete('reset',$token,['password'=>str_repeat('a',73),'password_confirm'=>str_repeat('a',73)]),'overlong password rejected');
+    $deny(fn()=>$mail->complete('reset',$token,['password'=>'New Test Password!','password_confirm'=>'Different Password!']),'confirmation mismatch rejected');
+    $check($mail->account($token,'reset')['id']===1,'validation errors do not consume token');
+    $sibling=$mail->token($u,'reset',time()+1800);
+    $mail->complete('reset',$token,['password'=>'New Test Password!','password_confirm'=>'New Test Password!']);
+    $check(password_verify('New Test Password!',$get(1)['password']),'new password stored as hash');
+    $check((int)$get(1)['auth_version']===2,'password reset invalidates existing sessions');
+    $deny(fn()=>$mail->complete('reset',$token,[]),'used link cannot be replayed');
+    $deny(fn()=>$mail->account($sibling,'reset'),'all previous reset links invalidated');
+    $pending=$get(2); $verify=$mail->token($pending,'verify',time()+86400);
+    $check($mail->account($verify,'verify')['id']===2 && $get(2)['status']==='pending','viewing verification does not activate account');
+    $deny(fn()=>$mail->account($mail->token($pending,'reset',time()+1800),'reset'),'pending user cannot reset password');
+    $mail->complete('verify',$verify,[]);
+    $check($get(2)['status']==='active','verification activates account');
+    $deny(fn()=>$mail->complete('verify',$verify,[]),'verification is single-use');
+    $deny(fn()=>$mail->account($mail->token($get(3),'reset',time()+1800),'reset'),'suspended account cannot reset password');
+    $token=$mail->token($get(1),'reset',time()+1800); $db->query('UPDATE f_users SET email=? WHERE id=1',['changed@example.test']);
+    $deny(fn()=>$mail->account($token,'reset'),'email changes invalidate existing links');
+    $de=require FRIENDS_ROOT.'/resources/lang/de.php'; $en=require FRIENDS_ROOT.'/resources/lang/en.php';
+    $check(array_keys($de)===array_keys($en),'DE and EN translations match');
+    echo "$count account-email checks passed. No external email sent.\n";
+} finally { $mail=null; $app=null; $db=null; gc_collect_cycles(); foreach(glob($dir.'/*') as $f) @unlink($f); @rmdir($dir); }

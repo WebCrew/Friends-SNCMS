@@ -1,0 +1,14 @@
+[
+  ["Join me: https://net-twin.de", "https://net-twin.de"],
+  ["Visit https://example.org/path?q=hello&sort=new.", "https://example.org/path?q=hello&sort=new"],
+  ["See (https://example.org/hello).", "https://example.org/hello"],
+  ["[https://example.org/wiki/Test_(example)]", "https://example.org/wiki/Test_(example)"],
+  ["First https://example.org/one then https://example.org/two", "https://example.org/one"],
+  ["HTTPS://example.org/test", "https://example.org/test"],
+  ["No web address here", ""],
+  ["javascript:alert(1)", ""],
+  ["https://user:password@example.org/ https://example.net/", "https://example.net/"],
+  ["\"https://example.org/test\"", "https://example.org/test"],
+  ["Local link http://127.0.0.1/private", "http://127.0.0.1/private"],
+  ["Broken https:// then https://example.org/valid", "https://example.org/valid"]
+]

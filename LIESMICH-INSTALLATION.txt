@@ -1,0 +1,32 @@
+Friends-SNCMS 0.3.1 – Installation
+Andreas Holzer @WebCrew (GitHub) · Copyright 2026 Andreas Holzer
+
+1. ZIP am PC entpacken.
+2. Den Ordner Friends-SNCMS öffnen. Darin liegen index.php, install.php,
+   .htaccess und die weiteren CMS-Ordner.
+3. Diesen GESAMTEN INHALT in das gewünschte Webspace-Verzeichnis hochladen.
+   Auch die versteckte Datei .htaccess muss mit hochgeladen werden.
+   NICHT nur den Inhalt von public hochladen und keine Ordner umsortieren.
+4. Die zugehörige URL im Browser öffnen, z. B. https://deine-domain.de/
+   oder https://deine-domain.de/community/. Der Installer startet automatisch.
+5. Den drei Schritten folgen: Server prüfen, Datenbank verbinden,
+   Community und Administratorkonto einrichten.
+
+Eine leere MySQL-Datenbank und deren Zugangsdaten erhältst du im Kundenbereich
+deines Hosters. Die Tabellen erstellt das CMS selbst. Kein SQL-Import,
+kein Lizenzschlüssel, kein Umstellen der Domain auf public.
+
+Alternativ kannst du dieselbe Installation direkt über install.php aufrufen.
+Nach erfolgreicher Einrichtung startet über dieselbe URL das CMS.
+
+Webspace: PHP 8.4 mit den im Installer geprüften Erweiterungen, HTTPS sowie
+Apache 2.4 oder kompatibler LiteSpeed mit aktiven .htaccess-/Rewrite-Regeln.
+Sind die Schutzregeln nicht aktiv, startet der Installer nicht ungeschützt.
+Bei einer entsprechenden Meldung zuerst prüfen, ob .htaccess mit hochgeladen wurde.
+
+Für eine neue Installation ein leeres Zielverzeichnis verwenden. Eine vorhandene
+Community vor einem Update samt Datenbank und privaten Dateien sichern.
+Version 0.3 auf 0.3.1 benötigt keine Datenbankänderung. Weitere Hinweise:
+docs/INSTALL.md und docs/FEATURES-0.3.md.
+
+Die MySQL-5.7-Endabnahme und echte geräteübergreifende Audiotests stehen noch aus.
