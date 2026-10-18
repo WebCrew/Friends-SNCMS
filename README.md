@@ -88,7 +88,7 @@ Run bin/check.ps1 on Windows for local checks. CI runs the PHP/JavaScript and My
 
 **Also in development: Guided-CMS.** Follow [@WebCrew](https://github.com/WebCrew) for future projects and company news.
 
-Friends-SNCMS is an original implementation. No source, schema, themes, documentation or assets from the inspected abandoned CMS or Sngine are distributed.
+Friends-SNCMS is an original implementation.
 
 ## Deutsch
 
